@@ -1,8 +1,4 @@
 
-exports.isDuplicateVehicle = (spots, licenseplate) => {
-  return spots.find((spot) => spot.vehicle.licenseplate.toLowerCase() === licenseplate.toLowerCase());
-}
-
 exports.getVehicleColor = (vehicle) => {
   return vehicle.color || '';
 }
@@ -15,7 +11,7 @@ exports.getTicketNumber = (vehicle) => {
   return vehicle.ticket.number || '';
 }
 
-exports.filterVehicle = (spots, searchValue, getKeyLogic, getValueLogic) => {
+exports.getFilterValue = (spots, searchValue, getKeyLogic, getValueLogic) => {
   let result = [];
 
   spots.forEach((spot) => {
@@ -25,4 +21,28 @@ exports.filterVehicle = (spots, searchValue, getKeyLogic, getValueLogic) => {
   });
 
   return result;
+}
+
+exports.getYargsSlotsConfig = () => {
+  return {
+    describe: 'Number of slots present in the parking lot',
+    demandOption: true,
+    type: 'number'
+  }
+}
+
+exports.getYargsLicensePlateConfig = () => {
+  return {
+    describe: 'License plate plate of the car',
+    demandOption: true,
+    type: 'string'
+  }
+}
+
+exports.getYargsColorConfig = () => {
+  return {
+    describe: 'Color of the car',
+    demandOption: true,
+    type: 'string'
+  }
 }
