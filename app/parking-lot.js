@@ -23,7 +23,7 @@ exports.parkVehicle = async (licenseplate = '', color = '') => {
 
     const data = await db.loadData();
 
-    if (!isParkingSpotAvailable(data)) return;
+    if (!isParkingSpotAvailable(data, licenseplate)) return;
 
     const vehicle = { ticket: { number: nanoid(), entryTime: Date.now() }, licenseplate, color };
     data.spots.push({ id: data.spots.length + 1, vehicle });
@@ -42,14 +42,16 @@ exports.filterVehicle = async (searchValue, getKeyLogic, getValueLogic) => {
   logger.log(result);
 }
 
-function isParkingSpotAvailable(data) {
+function isParkingSpotAvailable(data, licenseplate) {
   if (data.spots.length >= data.parkingSpots) {
     logger.logWarn('Parking spot not available!');
     return false;
   }
 
-  const duplicateVehicle = 
-    spots.find((spot) => spot.vehicle.licenseplate.toLowerCase() === licenseplate.toLowerCase());
+  const duplicateVehicle = data.spots.find((spot) => {
+    const currentLicensePlate = utils.getVehicleLicensePlate(spot.vehicle);
+    return currentLicensePlate.toLowerCase() === licenseplate.toLowerCase();
+  });
   if (duplicateVehicle) {
     logger.logWarn('Vehicle with this license plate already present!');
     return false;
