@@ -1,6 +1,7 @@
 const { nanoid } = require('nanoid');
 const db = require('./database-handler');
 const logger = require('./logger');
+const utils = require('./utils');
 
 exports.create = async (spotsCount = 0) => {
   try {
@@ -21,7 +22,7 @@ exports.parkVehicle = async (licenseplate = '', color = '') => {
       return;
     }
 
-    if (isDuplicateVehicle(data.spots, licenseplate)) {
+    if (utils.isDuplicateVehicle(data.spots, licenseplate)) {
       logger.logWarn('Vehicle with this license plate already present!');
       return;
     }
@@ -35,6 +36,8 @@ exports.parkVehicle = async (licenseplate = '', color = '') => {
   }
 }
 
-function isDuplicateVehicle(spots, licenseplate) {
-  return spots.find((spot) => spot.vehicle.licenseplate.toLowerCase() === licenseplate.toLowerCase());
+exports.filterVehicle = async (searchValue, getKeyLogic, getValueLogic) => {
+  const data = await db.loadData();
+  const result = utils.filterVehicle(data.spots, searchValue, getKeyLogic, getValueLogic);
+  console.log(result);
 }
