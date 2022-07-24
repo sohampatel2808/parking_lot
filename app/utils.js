@@ -11,18 +11,6 @@ exports.getTicketNumber = (vehicle) => {
   return vehicle.ticket.number || '';
 }
 
-exports.getFilterValue = (spots, searchValue, getKeyLogic, getValueLogic) => {
-  let result = [];
-
-  spots.forEach((spot) => {
-    if (getKeyLogic(spot.vehicle).toLowerCase() === searchValue.toLowerCase()) {
-      result.push(getValueLogic(spot.vehicle));
-    }
-  });
-
-  return result;
-}
-
 exports.getYargsSlotsConfig = () => {
   return {
     describe: 'Number of slots present in the parking lot',
@@ -33,7 +21,7 @@ exports.getYargsSlotsConfig = () => {
 
 exports.getYargsLicensePlateConfig = () => {
   return {
-    describe: 'License plate plate of the car',
+    describe: 'License plate of the vehicle',
     demandOption: true,
     type: 'string'
   }
@@ -41,7 +29,7 @@ exports.getYargsLicensePlateConfig = () => {
 
 exports.getYargsColorConfig = () => {
   return {
-    describe: 'Color of the car',
+    describe: 'Color of the vehicle',
     demandOption: true,
     type: 'string'
   }

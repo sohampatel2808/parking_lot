@@ -5,10 +5,14 @@ const utils = require('./utils');
 
 exports.create = async (spotsCount = 0) => {
   try {
-    const data = { parkingSpots: spotsCount, spots: [] };
+    const data = {
+      parkingSpots: spotsCount,
+      availableSpotIds: getInitialSpotIds(spotsCount),
+      occupiedSpots: []
+    };
     const response = await db.saveData(data);
 
-    logger.log(response);
+    logger.log('Parking lot created successfully!');
   } catch (ex) {
     logger.logError(ex);
   }
@@ -17,7 +21,7 @@ exports.create = async (spotsCount = 0) => {
 exports.parkVehicle = async (licenseplate = '', color = '') => {
   try {
     if (licenseplate === '' || color === '') {
-      logger.logWarn('Please provide license plate or color of the vehicle!');
+      logger.logWarn('Please provide license plate or color for the vehicle!');
       return;
     }
 
@@ -25,30 +29,75 @@ exports.parkVehicle = async (licenseplate = '', color = '') => {
 
     if (!isParkingSpotAvailable(data, licenseplate)) return;
 
-    const vehicle = { ticket: { number: nanoid(), entryTime: Date.now() }, licenseplate, color };
-    data.spots.push({ id: data.spots.length + 1, vehicle });
+    const newSpotData = {
+      id: data.availableSpotIds.pop(),
+      vehicle: { ticket: { number: nanoid(), entryTime: Date.now() }, licenseplate, color }
+    }
+    data.occupiedSpots.push(newSpotData);
     const response = await db.saveData(data);
 
-    logger.log(response);
+    logger.log('Vehicle parked successfully!');
   } catch (ex) {
     logger.logError(ex);
   }
 }
 
 exports.filterVehicle = async (searchValue, getKeyLogic, getValueLogic) => {
-  const data = await db.loadData();
-  const result = utils.getFilterValue(data.spots, searchValue, getKeyLogic, getValueLogic);
+  try {
+    const data = await db.loadData();
 
-  logger.log(result);
+    let filteredArray = [];
+    data.occupiedSpots.forEach((spot) => {
+      if (getKeyLogic(spot.vehicle).toLowerCase() === searchValue.toLowerCase()) {
+        filteredArray.push(getValueLogic(spot.vehicle));
+      }
+    });
+
+    const filteredData = filteredArray.length > 0 
+      ? `Queried Data: ${filteredArray}`
+      : 'No data found for this particular query!';
+
+    logger.log(filteredData);
+  } catch (ex) {
+    logger.logError(ex);
+  }
+}
+
+exports.unparkVehicle = async (licenseplate) => {
+  try {
+    if (licenseplate === '') {
+      logger.logWarn('Please provide license plate!');
+      return;
+    }
+
+    const data = await db.loadData();
+    const vehicleIndex = data.occupiedSpots.findIndex((spot) => {
+      return utils.getVehicleLicensePlate(spot.vehicle).toLowerCase() === licenseplate.toLowerCase();
+    });
+
+    if (vehicleIndex === -1) {
+      logger.logWarn('No vehicle with this license plate found!');
+      return;
+    }
+
+    const removedVehicle = data.occupiedSpots.splice(vehicleIndex, 1);
+    data.availableSpotIds.push(removedVehicle[0].id);
+    data.availableSpotIds.sort((a, b) => b - a);
+    const response = await db.saveData(data);
+
+    logger.log('Unparked vehicle successfully!');
+  } catch (ex) {
+    logger.logError(ex);
+  }
 }
 
 function isParkingSpotAvailable(data, licenseplate) {
-  if (data.spots.length >= data.parkingSpots) {
+  if (data.availableSpotIds <= 0) {
     logger.logWarn('Parking spot not available!');
     return false;
   }
 
-  const duplicateVehicle = data.spots.find((spot) => {
+  const duplicateVehicle = data.occupiedSpots.find((spot) => {
     const currentLicensePlate = utils.getVehicleLicensePlate(spot.vehicle);
     return currentLicensePlate.toLowerCase() === licenseplate.toLowerCase();
   });
@@ -58,4 +107,14 @@ function isParkingSpotAvailable(data, licenseplate) {
   }
 
   return true;
+}
+
+function getInitialSpotIds(spotsCount) {
+  let arrayIds = []
+
+  for (let i = spotsCount - 1; i >= 0; i--) {
+    arrayIds.push(i);
+  }
+
+  return arrayIds;
 }

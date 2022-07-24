@@ -15,7 +15,7 @@ yargs.command({
 
 yargs.command({
   command: 'park',
-  describe: 'Command for parking a car',
+  describe: 'Command for parking a vehicle',
   builder: {
     licenseplate: utils.getYargsLicensePlateConfig(),
     color: utils.getYargsColorConfig()
@@ -26,8 +26,19 @@ yargs.command({
 });
 
 yargs.command({
+  command: 'unpark',
+  describe: 'Command for removing a vehicle from parking lot',
+  builder: {
+    licenseplate: utils.getYargsLicensePlateConfig()
+  },
+  handler: (argv) => {
+    parkingLot.unparkVehicle(argv.licenseplate);
+  }
+});
+
+yargs.command({
   command: 'licenseplatebycolor',
-  describe: 'Command for fetching all license plate by color',
+  describe: 'Command for fetching all license plate by color of the vehicle',
   builder: {
     color: utils.getYargsColorConfig()
   },
@@ -38,7 +49,7 @@ yargs.command({
 
 yargs.command({
   command: 'ticketnumberbylicenseplate',
-  describe: 'Command for parking a car',
+  describe: 'Command for fetching a ticket number by license plate of the vehicle',
   builder: {
     licenseplate: utils.getYargsLicensePlateConfig()
   },
@@ -49,7 +60,7 @@ yargs.command({
 
 yargs.command({
   command: 'ticketnumberbycolor',
-  describe: 'Command for parking a car',
+  describe: 'Command for fetching all ticket numbers by color of the vehicle',
   builder: {
     color: utils.getYargsColorConfig()
   },

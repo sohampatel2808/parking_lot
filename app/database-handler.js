@@ -10,7 +10,7 @@ exports.loadData = function() {
       try {
         resolve(JSON.parse(data.toString()));
       } catch (ex) {
-        reject('Error in file parsing!');
+        reject('No parking lot data found, please create a parking lot first!');
       }
     });
   });
