@@ -42,8 +42,13 @@ exports.parkVehicle = async (licenseplate = '', color = '') => {
   }
 }
 
-exports.filterVehicle = async (searchValue, getKeyLogic, getValueLogic) => {
+exports.filterVehicle = async (searchValue = '', getKeyLogic, getValueLogic) => {
   try {
+    if (searchValue === '') {
+      logger.logWarn('Please provide search value!');
+      return;
+    }
+
     const data = await db.loadData();
 
     let filteredArray = [];
@@ -61,7 +66,7 @@ exports.filterVehicle = async (searchValue, getKeyLogic, getValueLogic) => {
   }
 }
 
-exports.unparkVehicle = async (licenseplate) => {
+exports.unparkVehicle = async (licenseplate = '') => {
   try {
     if (licenseplate === '') {
       logger.logWarn('Please provide license plate!');
