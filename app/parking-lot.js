@@ -53,11 +53,9 @@ exports.filterVehicle = async (searchValue, getKeyLogic, getValueLogic) => {
       }
     });
 
-    const filteredData = filteredArray.length > 0 
-      ? `Queried Data: ${filteredArray}`
-      : 'No data found for this particular query!';
-
-    logger.log(filteredData);
+    filteredArray.length > 0
+      ? logger.logTable(filteredArray) 
+      : logger.logWarn('No data found for this particular query!');
   } catch (ex) {
     logger.logError(ex);
   }

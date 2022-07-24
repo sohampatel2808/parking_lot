@@ -11,3 +11,7 @@ exports.logWarn = (message) => {
 exports.logError = (message) => {
   console.log(chalk.red.bold(message));
 }
+
+exports.logTable = (array) => {
+  console.table(array);
+}
