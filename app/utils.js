@@ -11,9 +11,9 @@ exports.getTicketNumber = (vehicle) => {
   return vehicle.ticket.number || '';
 }
 
-exports.getYargsSlotsConfig = () => {
+exports.getYargsSpotsConfig = () => {
   return {
-    describe: 'Number of slots present in the parking lot',
+    describe: 'Number of spots present in the parking lot',
     demandOption: true,
     type: 'number'
   }

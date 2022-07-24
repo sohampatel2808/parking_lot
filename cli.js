@@ -6,7 +6,7 @@ yargs.command({
   command: 'create',
   describe: 'Command for creating a parking lot',
   builder: {
-    spots: utils.getYargsSlotsConfig()
+    spots: utils.getYargsSpotsConfig()
   },
   handler: (argv) => {
     parkingLot.create(argv.spots);
