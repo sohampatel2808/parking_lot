@@ -1,0 +1,57 @@
+Parking Lot System:
+- This parking lot system will consist of one gate, and we will be maintaining two arrays that are availableSpotIds and occupiedSpots. availableSpotIds array will be holding a list of ids sorted in descending order and occupiedSpots array will contain information related to the vehicle and ticket for an individual spot. We can even extend our current approach for multiple gates, where each gate will have individual availableSpotIds and occupiedSpots arrays.
+- Suppose, if we have created a list of available spots and then simply traversed through the list of spots, for checking whether there is an empty spot or not, and if yes, then assign that spot to the vehicle, our time complexity would be O(n). Even while querying data we need to traverse through all the spots.
+- With the current approach, we can pop spot id from availableSpotIds with time complexity of O(1). Even when querying data we need to only traverse through the occupied spots.
+
+Operations:
+1. Create a parking lot:
+- For creating a parking lot, we will require the number of spots.
+- We will be generating an availableSpotIds array which will help us to check whether there are more parking spots or not, and it will be required while we are assigning a spot for parking a car.
+- Whenever we try to re-create a parking lot again, our current parking lot data will be removed.
+Sample object for creating a parking lot:
+{ 
+  parkingSpots: parking_spot_count,
+  availableSpotIds: array_available_spot_id,
+  occupiedSpots = array_spot_data
+}
+
+2. Parking a vehicle:
+- For parking a vehicle, we will require two arguments that is license plate and color of the vehicle. if the license plate or color is missing then return.
+- Now, We will check for the availability of parking spots and it will depend on whether we have more available spots or not, also we will check whether the vehicle with the same license plate is present in the parking lot or not.
+- If we will be having a spot for parking a car, then we will be assigning that spot to the vehicle. Also, pop that spot id from the availableSpotIds array.
+Sample object for parking a car:
+{
+ 	id: spot_id,
+ 	vechile: {
+    ticket: { number: unique_ticket_id, entryTime: entry_time_for_vehicle },
+    licenseplate: license_plate_of_vehicle, color: color_of_vehicle
+  }
+}
+
+3. Querying data:
+- For querying data, we will require a search value. This search value could be either the license plate or the color of the vehicle.
+- We will be filtering parking lot data based on the query search value.
+- We have support for three queries:
+  - fetch all the license plates based on the color of the vehicle
+  - fetch the ticket number based on the license plate of the vehicle
+  - fetch all the ticket numbers based on the color of the vehicle
+
+4. Unparking a vehicle:
+- For unparking a vehicle, we will require one argument which is the license plate. If the license plate is missing then return.
+- If we are having the license plate, then we will find the index of the vehicle from the occupiedSpots array.
+- If we didn't find the vehicle then return, else we will remove that vehicle data from the occupiedSpots array, push the spot id into availableSpotIds and sort it.
+
+Commands:
+1. Creating a parking lot:
+node cli.js create --spots=value
+
+2. Parking a vehicle:
+node cli.js park --licenseplate="value" --color="value"
+
+3. Querying a data:
+node cli.js licenseplatebycolor --color="value"
+node cli.js ticketnumberbylicenseplate --licenseplate="value"
+node cli.js ticketnumberbycolor --color="value"
+
+4. Unparking a vehicle:
+node cli.js unpark --licenseplate="value"
